@@ -89,7 +89,6 @@ class BowlingGameTest < MiniTest::Unit::TestCase
     assert_equal 0, @game.frame_score(1)
   end
 
-=begin
   def test_scores_at_allframe_with_all1pin
     record_many_shots( 20, 1)
     10.times do | i |
@@ -97,7 +96,6 @@ class BowlingGameTest < MiniTest::Unit::TestCase
       assert_equal 2, @game.frame_score( frame_no )
     end
   end
-=end
 
   private
 
