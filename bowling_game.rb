@@ -5,7 +5,6 @@ class BowlingGame
     @score = 0
     @spare = false
     @last_pins = 0
-    @shot_no = 1
     @strike_bonus_count = 0
     @double_bonus_count = 0
     @frames = [ Frame.new ]
@@ -17,8 +16,6 @@ class BowlingGame
     @score += pins
     calc_spare_bonus(pins)
     calc_strike_bonus(pins)
-    @last_pins = pins
-    proceed_next_shot
     if frame.finished?
       @frames << Frame.new
     end
@@ -44,15 +41,11 @@ class BowlingGame
       @spare = true
     end
   end
-    
-    def spare?(pins)
-      @shot_no == 2 && @last_pins + pins == 10
-    end
 
   def calc_strike_bonus(pins)
     add_strike_bonus(pins)
     add_double_bonus(pins)
-    if strike?(pins)
+    if @frames.last.strike?
       recognize_strike_bonus
     end
   end
@@ -70,10 +63,6 @@ class BowlingGame
       end
     end
 
-    def strike?(pins)
-      pins == 10
-    end
-
     def recognize_strike_bonus
       if @strike_bonus_count == 0
         @strike_bonus_count = 2
@@ -82,12 +71,4 @@ class BowlingGame
       end
     end
 
-  def proceed_next_shot
-    if @shot_no == 1 && @strike_bonus_count < 2 \
-      && @double_bonus_count < 2
-      @shot_no = 2
-    else
-      @shot_no = 1
-    end
-  end
 end
