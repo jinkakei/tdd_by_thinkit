@@ -1,0 +1,10 @@
+require 'rake/testtask'
+
+# How to: $ rake test
+
+task default: [:test]
+
+Rake::TestTask.new do | test |
+  test.test_files = Dir['*_test.rb']
+  test.verbose = true
+end
