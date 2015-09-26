@@ -7,6 +7,9 @@ class Frame
   end
 
   def record_shot(pins)
+    unless (0..10).cover?(pins) && @score + pins <= 10
+      raise ArgumentError.new("bad num of pins: #{pins}")
+    end
     @score += pins
     @shot_count += 1
   end

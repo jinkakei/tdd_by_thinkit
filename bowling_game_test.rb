@@ -39,7 +39,7 @@ class BowlingGameTest < MiniTest::Unit::TestCase
   end
   
   def test_strike_v01
-    @game.record_shot(10) # strike: 10 + 3 + 3
+    record_strike # strike: 10 + 3 + 3
     @game.record_shot(3)
     @game.record_shot(3)
     @game.record_shot(1)
@@ -49,8 +49,8 @@ class BowlingGameTest < MiniTest::Unit::TestCase
   end
 
   def test_double
-    @game.record_shot(10) # strike: 10 + 10 + 3 = 23
-    @game.record_shot(10) # strike: 10 +  3 + 1 = 14
+    record_strike # strike: 10 + 10 + 3 = 23
+    record_strike # strike: 10 +  3 + 1 = 14
     @game.record_shot(3)
     @game.record_shot(1)
     record_many_shots(14,0) # remains are all gutter.
@@ -60,9 +60,9 @@ class BowlingGameTest < MiniTest::Unit::TestCase
   end
 
   def test_turkey
-    @game.record_shot(10) # + 10 + 10 = 30
-    @game.record_shot(10) # + 10 +  3 = 23
-    @game.record_shot(10) # +  3 + 1 = 14
+    record_strike # + 10 + 10 = 30
+    record_strike # + 10 +  3 = 23
+    record_strike # +  3 + 1 = 14
     @game.record_shot(3)
     @game.record_shot(1)
     record_many_shots(17,0) # remains are all gutter.
@@ -70,19 +70,17 @@ class BowlingGameTest < MiniTest::Unit::TestCase
   end
 
   def test_spare_after_strike
-    @game.record_shot(10) # + 5 + 5 = 20
-    @game.record_shot(5)
-    @game.record_shot(5) # spare: + 3 = 8
+    record_strike # + 5 + 5 = 20
+    record_spare # spare: + 3 = 8
     @game.record_shot(3)
     record_many_shots(15,0) # remains are all gutter.
     assert_equal 36, @game.score
   end
 
   def test_spare_after_double
-    @game.record_shot(10) # + 10 + 5 = 25
-    @game.record_shot(10) # + 5 + 5 = 20
-    @game.record_shot(5)
-    @game.record_shot(5) # spare: + 3 = 8
+    record_strike # + 10 + 5 = 25
+    record_strike # + 5 + 5 = 20
+    record_spare # spare: + 3 = 8
     @game.record_shot(3)
     record_many_shots(13,0) # remains are all gutter.
     assert_equal 61, @game.score
@@ -101,19 +99,20 @@ class BowlingGameTest < MiniTest::Unit::TestCase
     end
   end
 
-  def test_nobonus_for_openframe
-    frame = Frame.new
-    frame.record_shot(3)
-    frame.record_shot(3)
-    refute frame.need_bonus?
-  end
-
   private
 
   def record_many_shots( count, pins)
     count.times do
       @game.record_shot(pins)
     end
+  end
+
+  def record_strike
+    @game.record_shot(10)
+  end
+
+  def record_spare
+    record_many_shots(2, 5)
   end
 end # class BowlingGameTest
 

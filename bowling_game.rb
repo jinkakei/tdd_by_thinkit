@@ -18,11 +18,7 @@ class BowlingGame
   end
 
   def score
-    total = 0
-    @frames.each do |frame|
-      total += frame.score
-    end
-    total
+    @frames.inject(0) do | total, frame | total + frame.score end
   end
 
   def frame_score(frame_no)
