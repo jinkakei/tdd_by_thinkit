@@ -44,4 +44,37 @@ class FrameTest < MiniTest::Unit::TestCase
     frame.record_shot(10)
     assert frame.strike?, "Strike! 1st throw get 10 pins"
   end
+
+  def test_add_bonus
+    frame = Frame.new
+    frame.record_shot(5)
+    frame.record_shot(5)
+    frame.add_bonus(5)
+    assert_equal 15, frame.score
+  end
+
+  def test_nobonus_for_openframe
+    frame = Frame.new
+    frame.record_shot(3)
+    frame.record_shot(3)
+    refute frame.need_bonus?
+  end
+
+  def test_bonus_for_spare
+    frame = Frame.new
+    frame.record_shot(5)
+    frame.record_shot(5)
+    assert frame.need_bonus?, "before add bonus"
+    frame.add_bonus(5)
+    refute frame.need_bonus?, "after add bonus"
+  end
+
+  def test_bonus_for_strike
+    frame = Frame.new
+    frame.record_shot(10)
+    frame.add_bonus(5)
+    assert frame.need_bonus?, "after add 1st bonus"
+    frame.add_bonus(5)
+    refute frame.need_bonus?, "after add 2nd bonus"
+  end
 end

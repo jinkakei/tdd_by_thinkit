@@ -25,7 +25,8 @@ class BowlingGameTest < MiniTest::Unit::TestCase
     @game.record_shot(7) # spare: 3 + 7 = 10
     @game.record_shot(4) # x 2: spare bonus
     record_many_shots(17,0) # remains are all gutter.
-    assert_equal 18, @game.score
+    assert_equal 18, @game.score, "total"
+    assert_equal 14, @game.frame_score(1), "frame:1"
   end
 
   def test_spare_through_frame
@@ -43,7 +44,8 @@ class BowlingGameTest < MiniTest::Unit::TestCase
     @game.record_shot(3)
     @game.record_shot(1)
     record_many_shots(15,0) # remains are all gutter.
-    assert_equal 23, @game.score
+    assert_equal 23, @game.score, "total"
+    assert_equal 16, @game.frame_score(1), "frame:1"
   end
 
   def test_double
@@ -52,7 +54,9 @@ class BowlingGameTest < MiniTest::Unit::TestCase
     @game.record_shot(3)
     @game.record_shot(1)
     record_many_shots(14,0) # remains are all gutter.
-    assert_equal 41, @game.score
+    assert_equal 41, @game.score, "total"
+    assert_equal 23, @game.frame_score(1), "frame:1"
+    assert_equal 14, @game.frame_score(2), "frame:2"
   end
 
   def test_turkey
@@ -95,6 +99,13 @@ class BowlingGameTest < MiniTest::Unit::TestCase
       frame_no = i + 1
       assert_equal 2, @game.frame_score( frame_no )
     end
+  end
+
+  def test_nobonus_for_openframe
+    frame = Frame.new
+    frame.record_shot(3)
+    frame.record_shot(3)
+    refute frame.need_bonus?
   end
 
   private

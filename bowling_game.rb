@@ -2,10 +2,12 @@ require_relative 'frame'
 
 class BowlingGame
   def initialize
-    @score = 0
     @spare = false
+    @spare_frame = nil
     @last_pins = 0
+    @strike_frame = nil
     @strike_bonus_count = 0
+    @double_frame = nil
     @double_bonus_count = 0
     @frames = [ Frame.new ]
   end
@@ -13,7 +15,6 @@ class BowlingGame
   def record_shot(pins)
     frame = @frames.last
     frame.record_shot(pins)
-    @score += pins
     calc_spare_bonus(pins)
     calc_strike_bonus(pins)
     if frame.finished?
@@ -22,7 +23,11 @@ class BowlingGame
   end
 
   def score
-    return @score
+    total = 0
+    @frames.each do |frame|
+      total += frame.score
+    end
+    total
   end
 
   def frame_score(frame_no)
@@ -33,12 +38,14 @@ class BowlingGame
 
   def calc_spare_bonus(pins)
     if @spare
-      @score += pins
       @spare = false
+      @spare_frame.add_bonus(pins)
+      @spare_frame = nil
     end
     #if spare?(pins)
     if @frames.last.spare?
       @spare = true
+      @spare_frame = @frames.last
     end
   end
 
@@ -51,23 +58,25 @@ class BowlingGame
   end
     def add_strike_bonus(pins)
       if @strike_bonus_count > 0
-        @score += pins
         @strike_bonus_count -= 1
+        @strike_frame.add_bonus(pins)
       end
     end
 
     def add_double_bonus(pins)
       if @double_bonus_count > 0
-        @score += pins
         @double_bonus_count -= 1
+        @double_frame.add_bonus(pins)
       end
     end
 
     def recognize_strike_bonus
       if @strike_bonus_count == 0
         @strike_bonus_count = 2
+        @strike_frame = @frames.last
       else
         @double_bonus_count = 2
+        @double_frame = @frames.last
       end
     end
 
