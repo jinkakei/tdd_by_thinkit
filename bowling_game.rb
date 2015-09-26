@@ -3,9 +3,7 @@ require_relative 'frame'
 class BowlingGame
   def initialize
     @spare_frame = nil
-    @last_pins = 0
-    @strike_frame = nil
-    @double_frame = nil
+    @strikes = []
     @frames = [ Frame.new ]
   end
 
@@ -44,28 +42,20 @@ class BowlingGame
 
   def calc_strike_bonus(pins)
     add_strike_bonus(pins)
-    add_double_bonus(pins)
     if @frames.last.strike?
       recognize_strike_bonus
     end
   end
-    def add_strike_bonus(pins)
-      if @strike_frame && @strike_frame.need_bonus?
-        @strike_frame.add_bonus(pins)
-      end
-    end
-
-    def add_double_bonus(pins)
-      if @double_frame && @double_frame.need_bonus?
-        @double_frame.add_bonus(pins)
-      end
-    end
 
     def recognize_strike_bonus
-      if @strike_frame.nil? || !@strike_frame.need_bonus?
-        @strike_frame = @frames.last
-      else
-        @double_frame = @frames.last
+      @strikes << @frames.last
+    end
+
+    def add_strike_bonus(pins)
+      @strikes.each do | strike | 
+        if strike.need_bonus?
+          strike.add_bonus(pins)
+        end
       end
     end
 
